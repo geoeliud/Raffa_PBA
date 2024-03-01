@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/CatastrodeRolesSIIManuelBustos_1.js"></script>
+        <script src="data/reasAfectadasIncendioValparaiso16022024_2.js"></script>
+        <script src="data/TramitadosSistred_areaafectacion_Corregido_3.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-33.028976456985255,-71.50396773229967],[-33.010522358441115,-71.47407347654776]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function(event) {
+          var tagName = event.target.tagName,
+            popup = map._popup;
+          // Also check if flag is already set.
+          if (tagName === "IMG" && popup && !popup._updated) {
+            popup._updated = true; // Set flag to prevent looping.
+            popup.update();
+          }
+        }, true);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 0.5,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 18
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_CatastrodeRolesSIIManuelBustos_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(feature.properties['OBJECTID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['INIROL'] !== null ? autolinker.link(feature.properties['INIROL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FINROL'] !== null ? autolinker.link(feature.properties['FINROL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ROL_VIN'] !== null ? autolinker.link(feature.properties['ROL_VIN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ROL'] !== null ? autolinker.link(feature.properties['ROL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['UV'] !== null ? autolinker.link(feature.properties['UV'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTOR'] !== null ? autolinker.link(feature.properties['SECTOR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MANZANA'] !== null ? autolinker.link(feature.properties['MANZANA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PREDIO'] !== null ? autolinker.link(feature.properties['PREDIO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['OBSERVACIO'] !== null ? autolinker.link(feature.properties['OBSERVACIO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CODIGO'] !== null ? autolinker.link(feature.properties['CODIGO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['cod_txt'] !== null ? autolinker.link(feature.properties['cod_txt'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_area'] !== null ? autolinker.link(feature.properties['SHAPE_area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SHAPE_len'] !== null ? autolinker.link(feature.properties['SHAPE_len'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_CatastrodeRolesSIIManuelBustos_1_0() {
+            return {
+                pane: 'pane_CatastrodeRolesSIIManuelBustos_1',
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,255,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_CatastrodeRolesSIIManuelBustos_1');
+        map.getPane('pane_CatastrodeRolesSIIManuelBustos_1').style.zIndex = 401;
+        map.getPane('pane_CatastrodeRolesSIIManuelBustos_1').style['mix-blend-mode'] = 'normal';
+        var layer_CatastrodeRolesSIIManuelBustos_1 = new L.geoJson(json_CatastrodeRolesSIIManuelBustos_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CatastrodeRolesSIIManuelBustos_1',
+            layerName: 'layer_CatastrodeRolesSIIManuelBustos_1',
+            pane: 'pane_CatastrodeRolesSIIManuelBustos_1',
+            onEachFeature: pop_CatastrodeRolesSIIManuelBustos_1,
+            style: style_CatastrodeRolesSIIManuelBustos_1_0,
+        });
+        bounds_group.addLayer(layer_CatastrodeRolesSIIManuelBustos_1);
+        map.addLayer(layer_CatastrodeRolesSIIManuelBustos_1);
+        function pop_reasAfectadasIncendioValparaiso16022024_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['notation'] !== null ? autolinker.link(feature.properties['notation'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['area'] !== null ? autolinker.link(feature.properties['area'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Sup_ha'] !== null ? autolinker.link(feature.properties['Sup_ha'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_reasAfectadasIncendioValparaiso16022024_2_0() {
+            return {
+                pane: 'pane_reasAfectadasIncendioValparaiso16022024_2',
+                interactive: true,
+            }
+        }
+        function style_reasAfectadasIncendioValparaiso16022024_2_1() {
+            return {
+                pane: 'pane_reasAfectadasIncendioValparaiso16022024_2',
+                opacity: 1,
+                color: 'rgba(128,14,16,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_reasAfectadasIncendioValparaiso16022024_2');
+        map.getPane('pane_reasAfectadasIncendioValparaiso16022024_2').style.zIndex = 402;
+        map.getPane('pane_reasAfectadasIncendioValparaiso16022024_2').style['mix-blend-mode'] = 'normal';
+        var layer_reasAfectadasIncendioValparaiso16022024_2 = new L.geoJson.multiStyle(json_reasAfectadasIncendioValparaiso16022024_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_reasAfectadasIncendioValparaiso16022024_2',
+            layerName: 'layer_reasAfectadasIncendioValparaiso16022024_2',
+            pane: 'pane_reasAfectadasIncendioValparaiso16022024_2',
+            onEachFeature: pop_reasAfectadasIncendioValparaiso16022024_2,
+            styles: [style_reasAfectadasIncendioValparaiso16022024_2_0,style_reasAfectadasIncendioValparaiso16022024_2_1,]
+        });
+        bounds_group.addLayer(layer_reasAfectadasIncendioValparaiso16022024_2);
+        map.addLayer(layer_reasAfectadasIncendioValparaiso16022024_2);
+        function pop_TramitadosSistred_areaafectacion_Corregido_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NRO_EXPEDI'] !== null ? autolinker.link(feature.properties['NRO_EXPEDI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FECHA_INGR'] !== null ? autolinker.link(feature.properties['FECHA_INGR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PROCESS_EN'] !== null ? autolinker.link(feature.properties['PROCESS_EN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['RUT'] !== null ? autolinker.link(feature.properties['RUT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_SOLIC'] !== null ? autolinker.link(feature.properties['TIPO_SOLIC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXO'] !== null ? autolinker.link(feature.properties['SEXO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SOLICITANT'] !== null ? autolinker.link(feature.properties['SOLICITANT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TIPO_INMUE'] !== null ? autolinker.link(feature.properties['TIPO_INMUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['UBICACION'] !== null ? autolinker.link(feature.properties['UBICACION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['REGION'] !== null ? autolinker.link(feature.properties['REGION'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COMUNA'] !== null ? autolinker.link(feature.properties['COMUNA'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ROL'] !== null ? autolinker.link(feature.properties['ROL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FOJAS'] !== null ? autolinker.link(feature.properties['FOJAS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NUMERO'] !== null ? autolinker.link(feature.properties['NUMERO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['AÑO'] !== null ? autolinker.link(feature.properties['AÑO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CONSERVADO'] !== null ? autolinker.link(feature.properties['CONSERVADO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PLANO'] !== null ? autolinker.link(feature.properties['PLANO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GEO'] !== null ? autolinker.link(feature.properties['GEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Longitud'] !== null ? autolinker.link(feature.properties['Longitud'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Latitud'] !== null ? autolinker.link(feature.properties['Latitud'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SC'] !== null ? autolinker.link(feature.properties['SC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Observacio'] !== null ? autolinker.link(feature.properties['Observacio'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Casos cruc'] !== null ? autolinker.link(feature.properties['Casos cruc'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Casos cr_1'] !== null ? autolinker.link(feature.properties['Casos cr_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Casos cr_2'] !== null ? autolinker.link(feature.properties['Casos cr_2'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(feature.properties['layer'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(feature.properties['path'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+            var popup = layer.getPopup();
+            var content = popup.getContent();
+            var updatedContent = removeEmptyRowsFromPopupContent(content, feature);
+            popup.setContent(updatedContent);
+        }
+
+        function style_TramitadosSistred_areaafectacion_Corregido_3_0(feature) {
+            switch(String(feature.properties['Casos cruc'])) {
+                case 'En Archivo Provisorio':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,234,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Enviado a Tribunales':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,238,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'finalizado (solicitud duplicada)':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,242,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tramitado Negativo':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,5,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tramitado Negativo (termino anticipado)':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,35,1,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Tramitado Positivo':
+                    return {
+                pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(1,255,56,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_TramitadosSistred_areaafectacion_Corregido_3');
+        map.getPane('pane_TramitadosSistred_areaafectacion_Corregido_3').style.zIndex = 403;
+        map.getPane('pane_TramitadosSistred_areaafectacion_Corregido_3').style['mix-blend-mode'] = 'normal';
+        var layer_TramitadosSistred_areaafectacion_Corregido_3 = new L.geoJson(json_TramitadosSistred_areaafectacion_Corregido_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_TramitadosSistred_areaafectacion_Corregido_3',
+            layerName: 'layer_TramitadosSistred_areaafectacion_Corregido_3',
+            pane: 'pane_TramitadosSistred_areaafectacion_Corregido_3',
+            onEachFeature: pop_TramitadosSistred_areaafectacion_Corregido_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_TramitadosSistred_areaafectacion_Corregido_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_TramitadosSistred_areaafectacion_Corregido_3);
+        map.addLayer(layer_TramitadosSistred_areaafectacion_Corregido_3);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Tramitados Sistred_area afectacion_Corregido<br /><table><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_EnArchivoProvisorio0.png" /></td><td>En Archivo Provisorio</td></tr><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_EnviadoaTribunales1.png" /></td><td>Enviado a Tribunales</td></tr><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_finalizadosolicitudduplicada2.png" /></td><td>finalizado (solicitud duplicada)</td></tr><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_TramitadoNegativo3.png" /></td><td>Tramitado Negativo</td></tr><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_TramitadoNegativoterminoanticipado4.png" /></td><td>Tramitado Negativo (termino anticipado)</td></tr><tr><td style="text-align: center;"><img src="legend/TramitadosSistred_areaafectacion_Corregido_3_TramitadoPositivo5.png" /></td><td>Tramitado Positivo</td></tr></table>': layer_TramitadosSistred_areaafectacion_Corregido_3,'<img src="legend/reasAfectadasIncendioValparaiso16022024_2.png" /> Áreas Afectadas Incendio Valparaiso (16-02-2024)': layer_reasAfectadasIncendioValparaiso16022024_2,'<img src="legend/CatastrodeRolesSIIManuelBustos_1.png" /> Catastro de Roles SII (Manuel Bustos)': layer_CatastrodeRolesSIIManuelBustos_1,"Google Satellite": layer_GoogleSatellite_0,}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Search({
+            layer: layer_TramitadosSistred_areaafectacion_Corregido_3,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Casos cruc'}));
+        document.getElementsByClassName('search-button')[0].className +=
+         ' fa fa-binoculars';
+        </script>
+    </body>
+</html>
